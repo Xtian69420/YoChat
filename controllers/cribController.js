@@ -215,3 +215,33 @@ exports.getCribMembers = async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 };
+
+exports.addMemberThruInviteKey = async (req, res) => {
+  try {
+    const { name, key, userId } = req.body;
+
+    // Check if a crib exists with the given name and key
+    const crib = await Crib.findOne({ name, key });
+    if (!crib) {
+      return res.status(404).json({ message: 'Invalid crib name or key' });
+    }
+
+    // Check if user is already a member
+    if (crib.membersId.includes(userId)) {
+      return res.status(400).json({ message: 'User is already a member of this crib' });
+    }
+
+    // Add user to members
+    crib.membersId.push(userId);
+    await crib.save();
+
+    res.status(200).json({
+      message: 'User successfully added to the crib',
+      cribId: crib._id,
+      membersId: crib.membersId
+    });
+  } catch (error) {
+    console.error('Add Member via Invite Key Error:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};

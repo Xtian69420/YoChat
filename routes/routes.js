@@ -40,5 +40,7 @@ router.delete('/crib/:cribId/member/:memberId', cribController.removeMemeberById
 router.post('/crib/:cribId/message', cribController.sendMessage);
 router.get('/cribs/user/:userId', cribController.getUserCribs);
 router.get('/crib/:cribId/members', cribController.getCribMembers);
+router.post('/crib/join', cribController.addMemberThruInviteKey);
+
 
 module.exports = router;
