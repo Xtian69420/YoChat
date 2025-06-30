@@ -26,6 +26,8 @@ router.put('/user/update/:userId', upload.single('pfp'), userController.updateUs
 router.get('/users', userController.getAllUsers);
 router.get('/user/:userId', userController.getUserById);
 router.delete('/user/:userId', userController.deleteUser);
+router.post('/user/signin', userController.signIn);
+
 
 // crib routes
 router.post('/crib/create', cribController.createCrib);

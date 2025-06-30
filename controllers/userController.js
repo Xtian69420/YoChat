@@ -194,3 +194,33 @@ exports.deleteUser = async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 };
+
+exports.signIn = async (req, res) => {
+  try {
+    const { username, password } = req.body;
+
+    // Find user by username
+    const user = await User.findOne({ username });
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Compare provided password with hashed password
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(401).json({ message: 'Invalid password' });
+    }
+
+    // Exclude password in response
+    const { password: _, ...safeUser } = user.toObject();
+
+    res.status(200).json({
+      message: 'Sign-in successful',
+      user: safeUser
+    });
+
+  } catch (error) {
+    console.error('Sign In Error:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
