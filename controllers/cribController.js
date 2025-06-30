@@ -162,19 +162,30 @@ exports.getUserCribs = async (req, res) => {
 
 async function populateMessagesWithUsernames(crib) {
   const userIds = crib.messages.map(msg => msg.userId);
-  const users = await User.find({ _id: { $in: userIds } }, { username: 1 });
+
+  // pull BOTH username and pfpLink
+  const users = await User.find(
+    { _id: { $in: userIds } },
+    { username: 1, pfpLink: 1 }
+  );
 
   const userMap = {};
-  users.forEach(user => userMap[user._id] = user.username);
+  users.forEach(user => {
+    userMap[user._id] = {
+      username: user.username,
+      pfpLink: user.pfpLink
+    };
+  });
 
-  // Add username to each message
-  const messagesWithUsernames = crib.messages.map(msg => ({
-    ...msg.toObject(), // convert from Mongoose subdocument
-    username: userMap[msg.userId] || 'Unknown'
+  const messagesWithUserInfo = crib.messages.map(msg => ({
+    ...msg.toObject(), // convert from Mongoose subdoc
+    username: userMap[msg.userId]?.username || 'Unknown',
+    pfpLink: userMap[msg.userId]?.pfpLink || null
   }));
 
-  return { ...crib.toObject(), messages: messagesWithUsernames };
+  return { ...crib.toObject(), messages: messagesWithUserInfo };
 }
+
 
 exports.getCribMembers = async (req, res) => {
   try {
