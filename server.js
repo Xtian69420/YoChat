@@ -30,4 +30,5 @@ db.once('open', async () => {
 const routes = require('./routes/routes');
 app.use('/', routes);
 
-app.listen(3000, () => console.log('Server Started on port 3000'));
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
