@@ -1,13 +1,12 @@
 require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
-const cors = require('cors');
+const cors = require('cors'); // ✅ Only declared once
 const fs = require('fs');
 const path = require('path');
 
 const app = express();
 
-const cors = require('cors');
 app.use(cors({
   origin: '*', 
   credentials: true,
@@ -27,7 +26,7 @@ mongoose.connect(dburl, {
 });
 const db = mongoose.connection;
 db.on('error', (error) => console.error(error));
-db.once('open', async () => {
+db.once('open', () => {
   console.log('Connected to MongoDB');
 });
 
